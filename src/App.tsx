@@ -1,75 +1,64 @@
-import { useRecoilState } from "recoil";
 import styled from "styled-components";
-import { toDoState } from "./atoms";
+import { AnimatePresence, motion } from "framer-motion";
+import { useState } from "react";
 
-const {
-  DragDropContext,
-  Droppable,
-  Draggable,
-  DropResult,
-} = require("react-beautiful-dnd");
-
-const Wrapper = styled.div`
+const Wrapper = styled(motion.div)`
+  height: 100vh;
+  width: 100vw;
   display: flex;
-  max-width: 480px;
+  justify-content: space-around;
+  align-items: center;
+`;
+
+const Grid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  width: 50vw;
+  gap: 10px;
+  div:first-child,
+  div:last-child {
+    grid-column: span 2;
+  }
+`;
+
+const Box = styled(motion.div)`
+  height: 200px;
+  background-color: rgba(255, 255, 255, 1);
+  border-radius: 40px;
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1), 0 10px 20px rgba(0, 0, 0, 0.06);
+`;
+
+const Overlay = styled(motion.div)`
   width: 100%;
-  margin: 0 auto;
+  height: 100%;
+  position: absolute;
+  display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
-`;
-
-const Boards = styled.div`
-  display: grid;
-  width: 100%;
-  grid-template-columns: repeat(1, 1fr);
-`;
-
-const Board = styled.div`
-  padding: 20px 10px;
-  padding-top: 30px;
-  background-color: ${(props) => props.theme.boardColor};
-  border-radius: 5px;
-  min-height: 200px;
-`;
-
-const Card = styled.div`
-  border-radius: 5px;
-  padding: 10px 10px;
-  margin-bottom: 5px;
-  background-color: ${(props) => props.theme.cardColor};
 `;
 
 function App() {
-  const [toDos, setToDos] = useRecoilState(toDoState);
-  const onDragEnd = ({ destination, source }: typeof DropResult) => {};
+  const [id, setId] = useState<null | string>(null);
   return (
-    <DragDropContext onDragEnd={onDragEnd}>
-      <Wrapper>
-        <Boards>
-          <Droppable droppableId="one">
-            {(provided: any) => (
-              <Board ref={provided.innerRef} {...provided.droppableProps}>
-                {toDos.map((toDo, index) => (
-                  <Draggable draggableId={toDo} index={index} key={index}>
-                    {(provided: any) => (
-                      <Card
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}
-                      >
-                        {toDo}
-                      </Card>
-                    )}
-                  </Draggable>
-                ))}
-                {provided.placeholder}
-              </Board>
-            )}
-          </Droppable>
-        </Boards>
-      </Wrapper>
-    </DragDropContext>
+    <Wrapper>
+      <Grid>
+        {["1", "2", "3", "4"].map((n) => (
+          <Box onClick={() => setId(n)} key={n} layoutId={n} />
+        ))}
+      </Grid>
+      <AnimatePresence>
+        {id ? (
+          <Overlay
+            onClick={() => setId(null)}
+            initial={{ backgroundColor: "rgba(0, 0, 0, 0)" }}
+            animate={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+            exit={{ backgroundColor: "rgba(0, 0, 0, 0)" }}
+          >
+            <Box layoutId={id} style={{ width: 400, height: 200 }} />
+          </Overlay>
+        ) : null}
+      </AnimatePresence>
+    </Wrapper>
   );
 }
 

@@ -1,9 +1,10 @@
 import React from "react";
-import ReactDOM from "react-dom/client";
+import ReactDOM from "react-dom";
 import { RecoilRoot } from "recoil";
 import { ThemeProvider } from "styled-components";
 import App from "./App";
 import { darkTheme } from "./theme";
+
 import { createGlobalStyle } from "styled-components";
 
 const GlobalStyle = createGlobalStyle`
@@ -38,11 +39,7 @@ footer, header, hgroup, main, menu, nav, section {
     display: none;
 }
 body {
-  font-weight: 300;
-  line-height: 1.2;
-  font-family: 'Source Sans Pro', sans-serif;
-  background-color: ${(props) => props.theme.bgColor};
-  color: black;
+  line-height: 1;
 }
 menu, ol, ul {
   list-style: none;
@@ -62,20 +59,25 @@ table {
 * {
   box-sizing: border-box;
 }
+body {
+  font-weight: 300;
+  font-family: 'Source Sans Pro', sans-serif;
+  color:black;
+  line-height: 1.2;
+  background:linear-gradient(135deg,#e09,#d0e);
+}
 a {
-  text-decoration: none;
+  text-decoration:none;
   color:inherit;
 }
 `;
 
-const root = ReactDOM.createRoot(
-  document.getElementById("root") as HTMLElement
-);
-root.render(
+ReactDOM.render(
   <RecoilRoot>
     <ThemeProvider theme={darkTheme}>
       <GlobalStyle />
       <App />
     </ThemeProvider>
-  </RecoilRoot>
+  </RecoilRoot>,
+  document.getElementById("root")
 );
